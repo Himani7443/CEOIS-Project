@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CEOIS - Report Submitted</title>
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+    {% include 'partials/nav.html' %}
+
+    <main class="success-section">
+
+        <div class="success-icon" aria-hidden="true">✅</div>
+
+        <h1>Report Submitted Successfully!</h1>
+
+        <p>
+            Your report has been saved in the CEOIS system
+            for the administrator to review.
+        </p>
+
+        {% if tracking_code %}
+        <div class="tracking-code-box">
+
+            <h2>Your Report Tracking ID</h2>
+
+            <p class="tracking-code">
+                {{ tracking_code }}
+            </p>
+
+            <p>
+                Please save this tracking ID.
+                You will need it to check your report status.
+            </p>
+
+            <a href="{{ url_for('track_report') }}"
+               class="main-button">
+                Track My Report
+            </a>
+
+        </div>
+        {% endif %}
+
+        <div>
+            <a href="{{ url_for('home') }}" class="main-button">
+                🏠 Back to Home
+            </a>
+
+            <a href="{{ url_for('report') }}"
+               class="main-button secondary-button">
+                📝 Submit Another Report
+            </a>
+        </div>
+
+    </main>
+
+    {% include 'partials/footer.html' %}
+
+</body>
+</html>

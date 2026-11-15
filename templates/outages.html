@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CEOIS - Area-Wise Outage Information</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    {% include 'partials/nav.html' %}
+    {% include 'partials/flash.html' %}
+    <main>
+        <section class="outage-hero"><h1>⚡ Area-Wise Outage Information</h1><p>Review manually maintained announcements for your area.</p></section>
+        <section class="outage-list">
+            <form method="GET" action="{{ url_for('outages') }}" class="filter-bar status-card">
+                <div><label for="area-filter">Choose area</label><select id="area-filter" name="area"><option value="">All areas</option>
+                    {% for area in supported_areas %}<option value="{{ area }}" {% if selected_area == area %}selected{% endif %}>{{ area }}</option>{% endfor %}
+                </select></div>
+                <div class="filter-actions"><button type="submit">Filter Announcements</button><a class="text-link" href="{{ url_for('outages') }}">Clear</a></div>
+            </form>
+            {% if announcements %}
+            <div class="outage-grid">
+                {% for item in announcements %}<article class="outage-card">
+                    <h2>📍 {{ item['area'] }}</h2>
+                    <p><strong>📅 Date:</strong> {{ item['outage_date'] }}</p>
+                    <p><strong>🕒 Start time:</strong> {{ item['start_time'] }}</p>
+                    <p><strong>🔌 Expected restoration:</strong> {{ item['restoration_time'] }}</p>
+                    <p><strong>🔧 Reason / Notes:</strong> {{ item['reason'] }}</p>
+                    <p><strong>📌 Announcement status:</strong> <span class="status-pill">{{ item['status'] }}</span></p>
+                </article>{% endfor %}
+            </div>
+            {% else %}
+            <div class="status-card empty-state"><div class="feature-icon">🗓️</div><h2>No announcements recorded</h2><p>{% if selected_area %}There are no announcements recorded for {{ selected_area }}.{% else %}There are currently no outage announcements recorded in the prototype.{% endif %}</p><p>Electricity status is unverified. Please check with your electricity provider for confirmed outage information.</p></div>
+            {% endif %}
+            <div class="notice"><strong>ℹ️ Important Notice</strong><p>CEOIS is a college project prototype. Announcements are entered manually by an administrator and are not connected to live APCPDCL data. Please confirm actual outage schedules with your electricity provider.</p></div>
+        </section>
+    </main>
+    {% include 'partials/footer.html' %}
+</body>
+</html>

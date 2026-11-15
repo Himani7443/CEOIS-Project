@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CEOIS - Admin Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    {% include 'partials/nav.html' %}
+    {% include 'partials/flash.html' %}
+    <main class="status-section">
+        <h1 class="page-title">🛡️ Admin Dashboard</h1>
+        <p>Review submitted community reports and update their progress.</p>
+        <div class="admin-actions">
+            <a class="main-button" href="{{ url_for('admin_outages') }}">📢 Manage Outage Announcements</a>
+            <form method="POST" action="{{ url_for('admin_logout') }}" class="inline-form">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <button type="submit" class="secondary-button">Logout</button>
+            </form>
+        </div>
+
+        <form method="GET" action="{{ url_for('admin') }}" class="filter-bar status-card">
+            <div><label for="filter-area">Filter by area</label>
+                <select id="filter-area" name="area"><option value="">All areas</option>
+                    {% for area in all_report_areas %}<option value="{{ area }}" {% if selected_area == area %}selected{% endif %}>{{ area }}</option>{% endfor %}
+                </select></div>
+            <div><label for="filter-status">Filter by status</label>
+                <select id="filter-status" name="status"><option value="">All statuses</option>
+                    {% for status in report_statuses %}<option value="{{ status }}" {% if selected_status == status %}selected{% endif %}>{{ status }}</option>{% endfor %}
+                </select></div>
+            <div class="filter-actions"><button type="submit">Apply Filters</button><a class="text-link" href="{{ url_for('admin') }}">Clear</a></div>
+        </form>
+
+        <h2 class="section-heading">Submitted Power-Cut Reports ({{ reports|length }})</h2>
+        {% if reports %}
+        <div class="table-wrap status-card"><table>
+            <thead><tr><th>ID</th><th>Name</th><th>Area</th><th>Problem</th><th>Date</th><th>Status</th><th>Actions</th></tr></thead>
+            <tbody>{% for report in reports %}<tr>
+                <td>{{ report['id'] }}</td><td>{{ report['name'] }}</td><td>{{ report['area'] }}</td>
+                <td class="problem-cell">{{ report['problem'] }}</td><td>{{ report['report_date'] }}</td>
+                <td><span class="status-pill {{ report['status']|lower|replace(' ', '-') }}">{{ report['status'] }}</span></td>
+                <td><div class="row-actions">
+                    <form method="POST" action="{{ url_for('update_status', report_id=report['id']) }}" class="update-form">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <label class="visually-hidden" for="status-{{ report['id'] }}">Status for report {{ report['id'] }}</label>
+                        <select id="status-{{ report['id'] }}" name="status">{% for status in report_statuses %}<option value="{{ status }}" {% if report['status'] == status %}selected{% endif %}>{{ status }}</option>{% endfor %}</select>
+                        <button type="submit">Update</button>
+                    </form>
+                    <form method="POST" action="{{ url_for('remove_report', report_id=report['id']) }}" onsubmit="return confirm('Delete report #{{ report['id'] }}? This cannot be undone.');">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button type="submit" class="danger-button">Delete</button>
+                    </form>
+                </div></td>
+            </tr>{% endfor %}</tbody>
+        </table></div>
+        {% else %}<div class="status-card empty-state"><p>No reports match the selected filters.</p></div>{% endif %}
+    </main>
+    {% include 'partials/footer.html' %}
+</body>
+</html>

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About CEOIS</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    {% include 'partials/nav.html' %}
+    <main class="status-section">
+        <div class="status-card content-card">
+            <h1 class="page-title">About CEOIS</h1>
+            <h2>Our Project</h2>
+            <p>CEOIS is a software prototype designed to help community members view manually maintained, area-wise electricity outage announcements and submit power-supply problem reports.</p>
+            <h2>Main Features</h2>
+            <ul class="content-list">
+                <li>View outage announcements maintained by an administrator.</li>
+                <li>Filter announcements by area.</li>
+                <li>Submit power-cut reports.</li>
+                <li>Track submitted reports using a unique Report Tracking ID and check their current status.</li>
+                <li>Review reports and update report status in the admin dashboard.</li>
+                <li>Manage outage announcements through the admin area.</li>
+                <li>View aggregate community-report counts without exposing reporter details publicly.</li>
+            </ul>
+            <div class="notice"><strong>Project limitation:</strong> CEOIS does not provide live electricity-provider data or real SMS notifications. No reports does not mean electricity is available.</div>
+            <a href="{{ url_for('home') }}" class="main-button">Back to Home</a>
+        </div>
+    </main>
+    {% include 'partials/footer.html' %}
+</body>
+</html>

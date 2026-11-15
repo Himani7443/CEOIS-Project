@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CEOIS - Admin Login</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    {% include 'partials/nav.html' %}
+    {% include 'partials/flash.html' %}
+    <main class="status-section">
+        <div class="status-card form-card login-card">
+            <h1 class="page-title">🔐 Administrator Login</h1>
+            <p>Authorized administrator access only.</p>
+            {% if error %}<div class="error-box" role="alert">{{ error }}</div>{% endif %}
+            <form method="POST" action="{{ url_for('admin_login') }}">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <label for="username">Username</label>
+                <input type="text" id="username" name="username" value="{{ username_value|default('') }}" autocomplete="username" maxlength="100" required>
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" autocomplete="current-password" required>
+                <button type="submit">Login</button>
+            </form>
+            <p class="field-note">Admin access is for project demonstration and management.</p>
+        </div>
+    </main>
+    {% include 'partials/footer.html' %}
+</body>
+</html>

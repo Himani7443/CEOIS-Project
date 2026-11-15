@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Guidance - CEOIS</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    {% include 'partials/nav.html' %}
+    <main class="status-section">
+        <div class="status-card content-card">
+            <h1 class="page-title">Contact & Reporting Guidance</h1>
+            <p>CEOIS is a student prototype and is not an official electricity-department service.</p>
+            <h2>How to Report a Problem in CEOIS</h2>
+            <ol class="content-list"><li>Open the Report page.</li><li>Enter your name and choose your area.</li><li>Describe the electricity problem.</li><li>Submit the form. The report will be saved for the project administrator to review.</li></ol>
+            <div class="notice"><strong>Important:</strong> CEOIS does not automatically send a report to the electricity provider. For urgent electricity issues or to confirm an outage, contact your local electricity provider through its official contact channels.</div>
+            <a href="{{ url_for('report') }}" class="main-button">📝 Report a Problem</a>
+        </div>
+    </main>
+    {% include 'partials/footer.html' %}
+</body>
+</html>

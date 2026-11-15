@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CEOIS - Report a Problem</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script src="{{ url_for('static', filename='app.js') }}" defer></script>
+</head>
+<body>
+    {% include 'partials/nav.html' %}
+    {% include 'partials/flash.html' %}
+    <main class="status-section">
+        <h1 class="page-title">Report an Unexpected Power Cut</h1>
+        <p>Submit a report for the administrator to review. This does not automatically notify the electricity provider.</p>
+        <form class="status-card form-card" action="{{ url_for('report') }}" method="POST">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            {% if error %}<div class="error-box" role="alert">⚠️ {{ error }}</div>{% endif %}
+            <label for="name">Your Name</label>
+            <input type="text" id="name" name="name" value="{{ form_data.name|default('') }}" placeholder="Enter your name" maxlength="100" autocomplete="name" required>
+            <label for="area">Select Your Area</label>
+            <select id="area" name="area" required>
+                <option value="">-- Choose Area --</option>
+                {% for area in ['Gudivada', 'Gudlavalleru', 'Machilipatnam', 'Other'] %}
+                    <option value="{{ area }}" {% if form_data.area|default('') == area %}selected{% endif %}>{{ area }}</option>
+                {% endfor %}
+            </select>
+            <p class="field-note">Reports marked “Other” are visible to the administrator but are not included in the public area summary.</p>
+            <label for="problem">Problem Description</label>
+            <textarea id="problem" name="problem" rows="5" placeholder="Describe the power problem (maximum 1000 characters)" maxlength="1000" required>{{ form_data.problem|default('') }}</textarea>
+            <p class="field-note" id="character-count" aria-live="polite">0 / 1000 characters</p>
+            <button type="submit">Submit Report</button>
+        </form>
+    </main>
+    {% include 'partials/footer.html' %}
+</body>
+</html>

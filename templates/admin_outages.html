@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CEOIS - Manage Outage Announcements</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    {% include 'partials/nav.html' %}
+    {% include 'partials/flash.html' %}
+    <main class="status-section">
+        <h1 class="page-title">📢 Manage Outage Announcements</h1>
+        <p>Add or maintain manually verified information for the public Outages page.</p>
+        <div class="notice"><strong>Prototype notice:</strong> Only enter information you have verified. CEOIS is not connected to live APCPDCL data.</div>
+
+        <div class="status-card form-card">
+            <h2>{{ 'Edit Announcement' if editing_id else 'Add Announcement' }}</h2>
+            {% if error %}<div class="error-box" role="alert">{{ error }}</div>{% endif %}
+            <form method="POST" action="{{ url_for('edit_announcement', announcement_id=editing_id) if editing_id else url_for('add_announcement') }}">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <label for="outage-area">Area</label>
+                <select id="outage-area" name="area" required><option value="">-- Select Area --</option>
+                    {% for area in supported_areas %}<option value="{{ area }}" {% if form_data and form_data.area == area %}selected{% endif %}>{{ area }}</option>{% endfor %}
+                </select>
+                <label for="outage-date">Outage Date</label>
+                <input type="date" id="outage-date" name="outage_date" value="{{ form_data.outage_date if form_data else '' }}" required>
+                <div class="two-column-fields">
+                    <div><label for="start-time">Start Time</label><input type="time" id="start-time" name="start_time" value="{{ form_data.start_time if form_data else '' }}" required></div>
+                    <div><label for="restoration-time">Expected Restoration Time</label><input type="time" id="restoration-time" name="restoration_time" value="{{ form_data.restoration_time if form_data else '' }}" required></div>
+                </div>
+                <label for="reason">Reason / Notes</label>
+                <textarea id="reason" name="reason" rows="3" maxlength="500" required>{{ form_data.reason if form_data else '' }}</textarea>
+                <label for="announcement-status">Announcement Status</label>
+                <select id="announcement-status" name="status" required>{% for status in announcement_statuses %}<option value="{{ status }}" {% if form_data and form_data.status == status %}selected{% elif not form_data and status == 'Awaiting Verification' %}selected{% endif %}>{{ status }}</option>{% endfor %}</select>
+                <button type="submit">{{ 'Save Changes' if editing_id else 'Add Announcement' }}</button>
+                {% if editing_id %}<a class="text-link" href="{{ url_for('admin_outages') }}">Cancel edit</a>{% endif %}
+            </form>
+        </div>
+
+        <h2 class="section-heading">Current Announcements ({{ announcements|length }})</h2>
+        {% if announcements %}<div class="table-wrap status-card"><table>
+            <thead><tr><th>Area</th><th>Date</th><th>Start</th><th>Expected Restoration</th><th>Reason</th><th>Status</th><th>Actions</th></tr></thead>
+            <tbody>{% for item in announcements %}<tr>
+                <td>{{ item['area'] }}</td><td>{{ item['outage_date'] }}</td><td>{{ item['start_time'] }}</td><td>{{ item['restoration_time'] }}</td><td>{{ item['reason'] }}</td><td>{{ item['status'] }}</td>
+                <td><div class="row-actions"><a class="text-link" href="{{ url_for('edit_announcement', announcement_id=item['id']) }}">Edit</a>
+                    <form method="POST" action="{{ url_for('remove_announcement', announcement_id=item['id']) }}" onsubmit="return confirm('Delete this outage announcement? This cannot be undone.');">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button type="submit" class="danger-button">Delete</button>
+                    </form></div></td>
+            </tr>{% endfor %}</tbody>
+        </table></div>{% else %}<div class="status-card empty-state"><p>No announcements have been added yet. Visitors will see an unverified-information message until an announcement is entered.</p></div>{% endif %}
+    </main>
+    {% include 'partials/footer.html' %}
+</body>
+</html>

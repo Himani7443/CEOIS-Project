@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>CEOIS - Track Report</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+    {% include 'partials/nav.html' %}
+
+    <main class="success-section">
+
+        <h1>Track Your Report</h1>
+
+        <p>
+            Enter your Report Tracking ID to check the
+            current status of your submitted problem.
+        </p>
+
+        <form method="POST" action="{{ url_for('track_report') }}">
+
+            <input type="hidden"
+                   name="csrf_token"
+                   value="{{ csrf_token() }}">
+
+            <label for="tracking_code">
+                Report Tracking ID
+            </label>
+
+            <input
+                type="text"
+                id="tracking_code"
+                name="tracking_code"
+                placeholder="Example: CEOIS-A3F82B91"
+                value="{{ tracking_code }}"
+                maxlength="14"
+                required
+            >
+
+            <button type="submit" class="main-button">
+                Check Status
+            </button>
+
+        </form>
+
+        {% if error %}
+            <div class="error-message">
+                {{ error }}
+            </div>
+        {% endif %}
+
+        {% if report_data %}
+
+            <div class="tracking-code-box">
+
+                <h2>Report Details</h2>
+
+                <p>
+                    <strong>Tracking ID:</strong>
+                    {{ report_data["tracking_code"] }}
+                </p>
+
+                <p>
+                    <strong>Area:</strong>
+                    {{ report_data["area"] }}
+                </p>
+
+                <p>
+                    <strong>Submitted Date:</strong>
+                    {{ report_data["report_date"] }}
+                </p>
+
+                <p>
+                    <strong>Current Status:</strong>
+                    <span class="tracking-status">
+                        {{ report_data["status"] }}
+                    </span>
+                </p>
+
+                {% if report_data["status"] == "Pending" %}
+                    <p>Your report is waiting for administrator review.</p>
+
+                {% elif report_data["status"] == "In Progress" %}
+                    <p>Your report is currently being processed.</p>
+
+                {% elif report_data["status"] == "Resolved" %}
+                    <p>Your report has been marked as resolved.</p>
+                {% endif %}
+
+            </div>
+
+        {% endif %}
+
+        <br>
+
+        <a href="{{ url_for('home') }}" class="main-button">
+            Back to Home
+        </a>
+
+    </main>
+
+    {% include 'partials/footer.html' %}
+
+</body>
+</html>
